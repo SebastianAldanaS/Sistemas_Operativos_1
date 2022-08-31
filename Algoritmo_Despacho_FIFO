@@ -1,0 +1,85 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+i = 0
+x = 0
+ti = 0
+ts = 0
+htf = 0
+pte = 0
+pti = 0
+tabla= []
+maquinas = []
+
+
+proces = int(input("Ingrese el numero de procesos: "))
+
+p=proces
+
+while proces > 0:
+  nom = input("ingrese el nombre del proceso: ")
+  cpu = int(input("ingrese la rafaga del proceso: "))
+  tabla.append([nom,cpu])
+  htf = htf + cpu
+  proces -=1
+
+for n in tabla:
+  maquinas.append(tabla[x][0])
+  x = x + 1
+
+# Datos
+ht = htf + 5
+
+nmaq = len(tabla)
+hbar = 10
+tticks = 10
+
+
+# Creación de los objetos del plot:
+fig, gantt = plt.subplots()
+
+# Etiquetas de los ejes:
+gantt.set_xlabel("Tiempo")
+gantt.set_ylabel("Procesos")
+
+# Límites de los ejes:
+gantt.set_xlim(0, ht)
+gantt.set_ylim(0, nmaq*hbar)
+
+# Divisiones del eje de tiempo:
+gantt.set_xticks(range(0, ht, 1), minor=True)
+gantt.grid(True, axis='x', which='both')
+
+# Divisiones del eje de máquinas:
+gantt.set_yticks(range(hbar, nmaq*hbar, hbar), minor=True)
+gantt.grid(True, axis='y', which='minor')
+
+# Etiquetas de máquinas:
+gantt.set_yticks(np.arange(hbar/2, hbar*nmaq - hbar/2 + hbar,
+                           hbar))
+gantt.set_yticklabels(maquinas)
+
+# Función para armar tareas:
+def agregar_tarea(t0, d, maq, color):
+    # Índice de la máquina:
+    imaq = maquinas.index(maq)
+    # Posición de la barra:
+    gantt.broken_barh([(t0, d)], (hbar*imaq, hbar),
+                      facecolors=(color))
+# Agregamos dos tareas de ejemplo:
+
+for n in tabla:
+  
+  agregar_tarea(ti,tabla[i][1],tabla[i][0],random.choice("brgyc"))
+  te = ti - i
+  ti= ti + tabla[i][1]
+  pte = te + pte
+  pti = ti + pti
+  print("tiempo de espera",te,"tiempo del sistema",ti - i,"proceso", tabla[i][0])
+  i = i + 1
+
+print("Tiempo de espera promedio", pte/p, "tiempo de sistema promedio", pti/p)
+
+# Ploteamos
+plt.show()
